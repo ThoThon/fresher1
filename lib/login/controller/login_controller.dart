@@ -31,7 +31,6 @@ class LoginController extends GetxController {
       final tax = taxController.text.trim();
       final user = usernameController.text.trim();
       final pass = passwordController.text.trim();
-      await _authRepository.syncFromFirebase();
       final account = await _authRepository.login(tax, user, pass);
 
       if (account != null) {

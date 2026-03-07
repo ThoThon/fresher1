@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 import '../models/account_model.dart';
 import '../services/storage_service.dart';
@@ -12,6 +13,15 @@ class AuthRepository {
 
   Future<AccountModel?> login(
       String taxId, String username, String password) async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    final bool hasNetwork =
+        connectivityResult.contains(ConnectivityResult.mobile) ||
+            connectivityResult.contains(ConnectivityResult.wifi);
+
+    if (hasNetwork) {
+      await _syncFromFirebase();
+    }
+
     final localAcc = _storage.getAccount(username);
 
     if (localAcc == null || !localAcc.enabled) return null;
@@ -28,7 +38,7 @@ class AuthRepository {
     return null;
   }
 
-  Future<void> syncFromFirebase() async {
+  Future<void> _syncFromFirebase() async {
     try {
       final snapshot = await FirebaseFirestore.instance
           .collection('accounts')
