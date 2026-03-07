@@ -8,6 +8,7 @@ class LoginBinding extends Bindings {
   void dependencies() {
     Get.lazyPut(() => EncryptionService());
     Get.lazyPut(() => AuthRepository());
-    Get.lazyPut<LoginController>(() => LoginController());
+    Get.lazyPut<LoginController>(
+        () => LoginController(Get.find<AuthRepository>()));
   }
 }

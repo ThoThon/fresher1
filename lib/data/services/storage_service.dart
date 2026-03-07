@@ -8,24 +8,24 @@ class StorageService {
   Future<void> init() async {
     await Hive.initFlutter();
 
-    await Hive.openBox<Map>(accountsBoxName);
+    if (!Hive.isAdapterRegistered(0)) {
+      Hive.registerAdapter(AccountModelAdapter());
+    }
+
+    await Hive.openBox<AccountModel>(accountsBoxName);
     await Hive.openBox(authBoxName);
   }
 
   Future<void> saveAccounts(List<AccountModel> accounts) async {
-    var box = Hive.box<Map>(accountsBoxName);
+    var box = Hive.box<AccountModel>(accountsBoxName);
     for (var acc in accounts) {
-      await box.put(acc.username, acc.toJson());
+      await box.put(acc.username, acc);
     }
   }
 
   AccountModel? getAccount(String username) {
-    var box = Hive.box<Map>(accountsBoxName);
-    final data = box.get(username);
-    if (data != null) {
-      return AccountModel.fromJson(Map<String, dynamic>.from(data));
-    }
-    return null;
+    var box = Hive.box<AccountModel>(accountsBoxName);
+    return box.get(username);
   }
 
   Future<void> saveSession(String username) async {

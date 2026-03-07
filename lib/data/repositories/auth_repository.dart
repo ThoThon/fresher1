@@ -28,13 +28,11 @@ class AuthRepository {
     return null;
   }
 
-  Future<void> syncFromFirebase(String username) async {
+  Future<void> syncFromFirebase() async {
     try {
       final snapshot = await FirebaseFirestore.instance
           .collection('accounts')
-          .where('username', isEqualTo: username)
           .where('enabled', isEqualTo: true)
-          .limit(1)
           .get();
 
       final List<AccountModel> accounts = snapshot.docs

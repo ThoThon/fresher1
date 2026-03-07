@@ -6,7 +6,9 @@ import '../../data/repositories/auth_repository.dart';
 class LoginController extends GetxController {
   final formKey = GlobalKey<FormState>();
 
-  final AuthRepository _authRepository = Get.find<AuthRepository>();
+  final AuthRepository _authRepository;
+
+  LoginController(this._authRepository);
 
   final FocusNode taxFocus = FocusNode();
   final FocusNode usernameFocus = FocusNode();
@@ -29,7 +31,7 @@ class LoginController extends GetxController {
       final tax = taxController.text.trim();
       final user = usernameController.text.trim();
       final pass = passwordController.text.trim();
-      await _authRepository.syncFromFirebase(user);
+      await _authRepository.syncFromFirebase();
       final account = await _authRepository.login(tax, user, pass);
 
       if (account != null) {
